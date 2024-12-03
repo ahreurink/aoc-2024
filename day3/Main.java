@@ -15,7 +15,7 @@ public class Main {
     return Integer.parseInt(numbers[0]) * Integer.parseInt(numbers[1]);
   }
 
-  public static void main(String[] args) {
+  public static void part1(String[] args) {
     int sum = 0;
     String validMul = "mul\\(\\d+,\\d+\\)";
     while(input.hasNextLine()) {
@@ -23,6 +23,30 @@ public class Main {
       while(mul != null) {
         sum += execute(mul); 
         mul = input.findInLine(validMul);
+      }
+      input.nextLine();
+    } 
+    System.out.println(sum);
+  }
+
+  public static void main(String[] args) {
+    int sum = 0;
+    String validMul = "mul\\(\\d+,\\d+\\)";
+    String validDo = "do\\(\\)";
+    String validDont = "don't\\(\\)";
+    String validInstr = validMul + "|" + validDo + "|" + validDont;
+    boolean doing = true;
+    while(input.hasNextLine()) {
+      String instr = input.findInLine(validInstr);
+      System.out.println("Found instruction = " + instr);
+      while(instr != null) {
+        if(instr.matches(validDo))
+          doing = true;
+        else if(instr.matches(validDont))
+          doing = false;
+        else if(doing)
+          sum += execute(instr); 
+        instr = input.findInLine(validInstr);
       }
       input.nextLine();
     } 
