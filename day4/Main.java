@@ -156,8 +156,21 @@ public class Main {
     count += checkSouthWest(i, j) ? 1 : 0;  
     return count; 
   };
-  
-  public static void main(String[] args) { 
+ 
+  static boolean checkMas(int i, int j) {
+    if(cantGoDown(i) || cantGoUp(i) || cantGoLeft(i, j) || cantGoRight(i, j))
+      return false;
+
+    boolean nwToSeCheck = (((puzzle.get(i-1).get(j-1).equals('M')) && puzzle.get(i+1).get(j+1).equals('S'))
+                || ((puzzle.get(i-1).get(j-1).equals('S')) && puzzle.get(i+1).get(j+1).equals('M')));    
+
+    boolean neToSwCheck = (((puzzle.get(i-1).get(j+1).equals('M')) && puzzle.get(i+1).get(j-1).equals('S'))
+                || ((puzzle.get(i-1).get(j+1).equals('S')) && puzzle.get(i+1).get(j-1).equals('M')));    
+
+    return neToSwCheck && nwToSeCheck;  
+  };
+ 
+  public static void part1(String[] args) { 
     while(input.hasNextLine()){
       puzzle.add(new ArrayList<Character>());
       input.nextLine().chars().forEach(i -> puzzle.getLast().add((char) i)); 
@@ -172,5 +185,23 @@ public class Main {
       }
     }
     System.out.println("XMAX count = " + count);
+  }
+
+  public static void main(String[] args) { 
+    Main.target = "AM";
+    Main.targetSize = 2;
+    while(input.hasNextLine()){
+      puzzle.add(new ArrayList<Character>());
+      input.nextLine().chars().forEach(i -> puzzle.getLast().add((char) i)); 
+    }
+
+    int count = 0;
+    for(int i = 0; i < puzzle.size(); i++) {
+      for(int j = 0; j < puzzle.get(i).size(); j++) {
+        if(puzzle.get(i).get(j).equals('A'))
+          count += checkMas(i, j) ? 1 : 0;  
+      }
+    }
+    System.out.println("X-MAX count = " + count);
   }
 }
