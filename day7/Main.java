@@ -8,14 +8,17 @@ import java.lang.Long;
 public class Main {
   static Scanner input = new Scanner(System.in);
 
-  static Set<Character> operators = Set.of('+', '*');
+  static Set<Character> operators = Set.of('+', '*', '|');
 
-  static long apply(Character operator, long x, long y) {
+  static long apply(Character operator, Long x, Long y) {
     if(operator.equals('+')) 
       return x + y;
   
     if(operator.equals('*')) 
       return x * y;
+
+    if(operator.equals('|'))
+      return Long.parseLong(x.toString() + y.toString());
 
     throw new RuntimeException("Unsupported operator : " + operator);
   }
@@ -35,6 +38,23 @@ public class Main {
       }
     }
     return false;
+  }
+
+  public static void part1(String[] args) { 
+    long sum = 0;
+    while(input.hasNextLine()) {
+      String[] equation = input.nextLine().split(": ");
+      long answer = Long.parseLong(equation[0]);
+      String[] operandInput = equation[1].split(" ");
+      long[] operands = new long[operandInput.length];
+      for(int i = 0; i < operandInput.length ; i++) {
+        operands[i] = Long.parseLong(operandInput[i]);
+      }
+      if(canBeCorrect(operands, answer)) {
+        sum += answer; 
+      }
+    }
+    System.out.println(sum);
   }
 
   public static void main(String[] args) { 
