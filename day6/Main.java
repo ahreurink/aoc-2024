@@ -153,7 +153,6 @@ public class Main {
     while(canContinue) { 
       canContinue = checkBoundary(i, j);
       if(!canContinue) {
-        System.out.println("break at " + i + "," + j);
         return false;
       }
 
@@ -172,7 +171,6 @@ public class Main {
 
       
       if(!canContinue) {
-        System.out.println("break at " + i + "," + j);
         return false;
       }
 
@@ -261,13 +259,8 @@ public class Main {
         if(calculateLoop(startPoint.i, startPoint.j)) {
           loops++;
         }
-        //System.out.println();
-        //map.stream().forEach(System.out::println);
       } 
     }
-
-    //map.stream().forEach(System.out::println);
-    //long num = map.stream().flatMap(List::stream).filter(c -> c.equals('X')).count();
     System.out.println(loops);
   }
 }
