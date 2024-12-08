@@ -65,7 +65,25 @@ public class Main {
     }
   }
 
-  public static void main(String[] args) { 
+ static void traceAntennae(List<Location> antennaeGroup) {
+    for(int i = 0; i < antennaeGroup.size(); i++) {
+      for(int j = i + 1; j < antennaeGroup.size(); j++) {
+        Location location = antennaeGroup.get(i);
+        Location difference = location.minus(antennaeGroup.get(j));
+        while(location.withinBounds()) {
+          location.mark();
+          location = location.minus(difference); 
+        }
+        location = antennaeGroup.get(i);
+        while(location.withinBounds()) {
+          location.mark();
+          location = location.plus(difference); 
+        }
+      }
+    }
+  }
+
+ public static void main(String[] args) { 
     int row = 0;
     while(input.hasNextLine()) {
       String rowFrequencies = input.nextLine();
@@ -93,7 +111,7 @@ public class Main {
       antennae.values().forEach(antennae -> processAntennae(antennae));
     }
     else {
-      System.out.println("Not ready for part 2");
+      antennae.values().forEach(antennae -> traceAntennae(antennae));
     }
     long nodes = antiNodes.stream().flatMap(s -> s.stream()).filter(c -> c == '#').count();
     System.out.println(nodes);
