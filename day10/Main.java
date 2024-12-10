@@ -42,8 +42,10 @@ public class Main {
   static Set<Coordinate> valleys = new HashSet<>();
   static Set<Coordinate> visitedCoordinates = new HashSet<>();
   static Set<Coordinate> reachablePeaks = new HashSet<>();
+  static int reachedPeaks = 0; 
 
-  static void move(Coordinate point, char direction) {
+  static void move(Coordinate point, char direction, 
+      Set<Coordinate> visitedCoordinatesForRun) {
     if(reachablePeaks.size() == peaks.size()) {
       return;
     }
@@ -53,34 +55,44 @@ public class Main {
                direction == 'v' ? point.y + 1 : point.y;
 
     Coordinate newCoordinate = new Coordinate(newX, newY, 0);
-    if(!newCoordinate.withinBounds() || visitedCoordinates.contains(newCoordinate)) 
+    if(!newCoordinate.withinBounds() || visitedCoordinatesForRun.contains(newCoordinate)) 
       return;
 
     newCoordinate.height = map.get(newY).get(newX);
     if(newCoordinate.height != point.height + 1)
       return;
-    visitedCoordinates.add(newCoordinate);
+    visitedCoordinatesForRun.add(newCoordinate);
     if(newCoordinate.height == 9) {
-      reachablePeaks.add(newCoordinate);
+      if(part.equals("1"))
+        reachablePeaks.add(newCoordinate);
+      else
+        reachedPeaks += 1;
       return;
     }
 
-   tryAllDirections(newCoordinate, direction);
-  } 
+   tryAllDirections(newCoordinate, direction, visitedCoordinatesForRun);
+  }
 
-  static void tryAllDirections(Coordinate point, char previousDirection) {
-    move(point, '^');
-    move(point, 'v');
-    move(point, '<');
-    move(point, '>');
+  static void tryAllDirections(Coordinate point, char previousDirection,
+      Set<Coordinate> visitedCoordinatesForRun) {
+    move(point, '^', new HashSet<Coordinate>(visitedCoordinatesForRun));
+    move(point, 'v', new HashSet<Coordinate>(visitedCoordinatesForRun));
+    move(point, '<', new HashSet<Coordinate>(visitedCoordinatesForRun));
+    move(point, '>', new HashSet<Coordinate>(visitedCoordinatesForRun));
   }
 
   static int countPeaks(Coordinate startPoint) {
     reachablePeaks = new HashSet<>();
+    reachedPeaks = 0;
     visitedCoordinates = new HashSet<>();
-    tryAllDirections(startPoint, 'x');
-    return reachablePeaks.size();
+    tryAllDirections(startPoint, 'x', visitedCoordinates);
+    if(part.equals("1"))
+      return reachablePeaks.size();
+    else
+      return reachedPeaks;
   }
+
+  static String part = "";
 
   public static void main(String[] args) { 
     while(input.hasNextLine()) {
@@ -98,15 +110,10 @@ public class Main {
           peaks.add(new Coordinate(j, i, 9));
       }
     }
-
-    if(args[0].equals("1")) {
-      int sum = valleys.stream()
-                  .mapToInt(Main::countPeaks)
-                  .sum();    
-      System.out.println(sum);
-    }
-    else {
-      System.out.println("Not ready for part 2");
-    }
+    part = args[0];
+    int sum = valleys.stream()
+                .mapToInt(Main::countPeaks)
+                .sum();    
+    System.out.println(sum);
   }
 }
