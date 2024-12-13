@@ -84,10 +84,6 @@ public class Main {
 
   static int calculateCircumference(List<Coordinate> region) {
     int circumference = 0;
-    int maxX = region.stream().mapToInt(c -> c.x).max().orElseThrow(RuntimeException::new);
-    int maxY = region.stream().mapToInt(c -> c.y).max().orElseThrow(RuntimeException::new);
-    int minX = region.stream().mapToInt(c -> c.x).min().orElseThrow(RuntimeException::new);
-    int minY = region.stream().mapToInt(c -> c.y).min().orElseThrow(RuntimeException::new);
     for(Coordinate plant : region) {
       circumference += region.contains(new Coordinate(plant.x-1, plant.y, 'x')) ? 0 : 1;
       circumference += region.contains(new Coordinate(plant.x+1, plant.y, 'x')) ? 0 : 1;
