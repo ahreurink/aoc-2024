@@ -29,32 +29,30 @@ public class Main {
   }
 
   static long calculateMinCoins(Coordinate A, Coordinate B, Coordinate prize) {
-    long aMax = Math.min(prize.x / A.x, prize.y / A.y);
-    long bMax = Math.min(prize.x / B.x, prize.y / B.y);
-    long cost = Long.MAX_VALUE;
-    for(int a = 0; a <= aMax; a++) {
-      for(int b = 0; b<= bMax; b++) {
-        if(a*A.x + b*B.x == prize.x && a*A.y + b*B.y == prize.y &&
-            3*a + b < cost) {
-          cost = 3*a + b; 
-        }
-      }
-    }
-    if(cost == Long.MAX_VALUE)
+    double intermed0 = (double) B.x*prize.y / B.y;
+    double intermed1 = prize.x - intermed0;
+    double intermed2 = A.x - (double) A.y*B.x / B.y;
+    long a = (long) Math.round((double) intermed1 / intermed2);
+    long b = (long) Math.round((prize.y - A.y*a) / B.y);
+    
+    System.out.println(a + " " + b);
+    if(a < 0 || b < 0 || (a*A.x + b*B.x) != prize.x || (a*A.y + b*B.y) != prize.y)
       return 0;
-    System.out.println("Min coins = " + cost);
-    return cost;
+    System.out.println("Min coins = " + (long) ( 3*a + b ));
+    return (long) (3 * a + b);
   }
   
   public static void main(String[] args) { 
-    int coins = 0;
+    long coins = 0;
     while(input.hasNextLine()) {
       Coordinate buttonAConfig = parseLine(input.nextLine());
       Coordinate buttonBConfig = parseLine(input.nextLine());
       Coordinate prizeLocation = parseLine(input.nextLine());
       if(args[0].equals("2")) {
-        prizeLocation.x += 10000000000000l;
+        prizeLocation.x += 10000000000000L;
         prizeLocation.y += 10000000000000L;
+        if(prizeLocation.x < 0 || prizeLocation.y < 0) 
+          throw new RuntimeException("Prize overlow");
       }
       if(input.hasNextLine())
         input.nextLine();
