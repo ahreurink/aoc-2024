@@ -35,14 +35,20 @@ public class Main {
         return 4;
       return -1;
     }
-    
+
+    boolean adjacent(Robot robot) {
+      return ((robot.px - px) * (robot.px - px) < 2) 
+          && ((robot.py - py) * (robot.py - py) < 2);
+    }
+
     public boolean equals(Object other) {
       Robot otherBot = (Robot) other;
       return (otherBot.px == px && otherBot.py == py);
     }
 
     public String toString() {
-      return "[" + this.px + "," + this.py + "|" + this.vx + "," + this.vy + "]";
+      return "[" + this.px + "," + this.py + "|" + 
+                   this.vx + "," + this.vy + "]";
     }
   }
 
@@ -67,6 +73,12 @@ public class Main {
     return new Robot(px, py, vx, vy);
   }
 
+  static boolean atLeastOneAdjacent(Robot robot, List<Robot> robots) {
+    return robots.stream()
+          .filter(otherBot -> !robot.equals(otherBot))
+          .anyMatch(otherBot -> robot.adjacent(otherBot));
+  }
+
   static final int maxX = 101;
   static final int maxY = 103;
 
@@ -74,9 +86,6 @@ public class Main {
     List<Robot> robots = new ArrayList<>();
     while(input.hasNextLine())
       robots.add(parseLine((input.nextLine())));
-
-    System.out.println(robots);    
-
 
     if(args[0].equals("1")) {
       robots.forEach(r -> simulate(r, 100));
@@ -88,10 +97,18 @@ public class Main {
         .reduce(1, (a, b) -> a*b);
     }
     else {
-      for(int i = 0; i < 20000; i++) {
-         System.out.print("\033[H\033[2J");
+      for(int i = 1; i < 200000; i++) {
+        robots.forEach(r -> simulate(r, 1));
+        long count = robots.stream()
+          .filter(robot -> atLeastOneAdjacent(robot, robots))
+          .count();
+        if(count < 300)
+          continue;
+
+        System.out.print("\033[H\033[2J");
         System.out.flush();
-        System.out.println("Time elapsed = " + i);
+        System.out.println("Time elapsed = " + i + "count = " + count);
+
         for(long x = 0; x < 101; x++) {
           for(long y = 0; y < 101; y++) {
             if(robots.contains(new Robot(x, y, 0, 0)))
@@ -102,8 +119,6 @@ public class Main {
           System.out.println();
         }
 
-        robots.forEach(r -> simulate(r, 1));
-        
         Thread.sleep(200);
       }
     }
