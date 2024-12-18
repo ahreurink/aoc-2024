@@ -29,14 +29,19 @@ public class Main {
   }
 
   static long calculateMinCoins(Coordinate A, Coordinate B, Coordinate prize) {
-    double intermed0 = (double) B.x*prize.y / B.y;
-    double intermed1 = prize.x - intermed0;
-    double intermed2 = A.x - (double) A.y*B.x / B.y;
-    long a = (long) Math.round((double) intermed1 / intermed2);
-    long b = (long) Math.round((prize.y - A.y*a) / B.y);
+    long intermed1 = prize.x*B.y - B.x*prize.y;
+    long intermed2 = A.x*B.y - A.y*B.x;
+    if(intermed1 % intermed2 != 0) {
+      return 0;
+    }
+    long a = (long) intermed1 / intermed2;
+    if((prize.y - A.y*a) % B.y != 0) {
+      return 0;
+    }
+    long b = (long) (prize.y - A.y*a) / B.y;
     
     System.out.println(a + " " + b);
-    if(a < 0 || b < 0 || (a*A.x + b*B.x) != prize.x || (a*A.y + b*B.y) != prize.y)
+    if(a < 0 || b < 0)
       return 0;
     System.out.println("Min coins = " + (long) ( 3*a + b ));
     return (long) (3 * a + b);
