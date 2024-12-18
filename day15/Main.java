@@ -42,14 +42,14 @@ public class Main {
 
   static Optional<Coordinate> findNextCoordinate(char instruction, Coordinate current) {
     return switch(instruction) {
-      case '^' -> map.get(current.y).get(current.x - 1) != '#' ? 
-        Optional.of(new Coordinate(current.x - 1, current.y)) : Optional.empty();
-      case 'v' -> map.get(current.y).get(current.x + 1) != '#' ?
-        Optional.of(new Coordinate(current.x + 1, current.y)) : Optional.empty();
-      case '<' -> map.get(current.y - 1).get(current.x) != '#' ? 
+      case '^' -> map.get(current.y - 1).get(current.x) != '#' ? 
         Optional.of(new Coordinate(current.x, current.y - 1)) : Optional.empty();
-      case '>' -> map.get(current.y + 1).get(current.x) != '#' ?
+      case 'v' -> map.get(current.y + 1).get(current.x) != '#' ?
         Optional.of(new Coordinate(current.x, current.y + 1)) : Optional.empty();
+      case '<' -> map.get(current.y).get(current.x - 1) != '#' ? 
+        Optional.of(new Coordinate(current.x - 1, current.y)) : Optional.empty();
+      case '>' -> map.get(current.y).get(current.x + 1) != '#' ?
+        Optional.of(new Coordinate(current.x + 1, current.y)) : Optional.empty();
       default -> throw new RuntimeException("Invalid instruction");
     };
   }
@@ -92,12 +92,13 @@ public class Main {
     }
   }
 
-  static void renderMap(char x) {
+  static void renderMap(char move) {
+    StringBuilder output = new StringBuilder("\033[H\033[2J");
     try {
-      System.out.println("\033[H\033[2J"); 
-    System.out.println("Instruction = " + x);
-      map.forEach(System.out::println); 
-      Thread.sleep(500);
+      output.append("Instruction = " + move + "\n");
+      map.forEach(line -> { line.forEach(c -> output.append(c)); output.append('\n'); }); 
+      System.out.print(output);
+      Thread.sleep(1000);
     } 
     catch(InterruptedException e) {
       throw new RuntimeException(e);
@@ -110,7 +111,6 @@ public class Main {
       x = startX;
       y = startY;
       instructions.stream()
-        .peek(Main::renderMap)
         .forEach(instruction -> execute(instruction));
       int sum = 0;
       for(int y = 0; y < map.size(); y++) {
@@ -122,7 +122,6 @@ public class Main {
         }
       }
 
-      renderMap('O');
       System.out.println(sum);
     }
     else {
