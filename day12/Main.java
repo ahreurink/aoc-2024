@@ -60,26 +60,33 @@ public class Main {
   }
 
   static void mergeRegions(List<List<Coordinate>> regions) {
-    for(int i = 0; i < regions.size(); i++) {
-      for(int j = i + 1; j < regions.size(); j++) {
-        if(regions.get(j).size() == 0 || regions.get(i).size() == 0)
-          continue;
-        List<Coordinate> originalRegion = regions.get(i);
-        List<Coordinate> comparedRegion = regions.get(j);
-        if(originalRegion.get(0).type != comparedRegion.get(0).type)
-          continue;
-        if(originalRegion.stream()
-             .anyMatch(plant1 -> comparedRegion.stream().anyMatch(plant2 -> plant2.adjacent(plant1)))) {
-          originalRegion.addAll(comparedRegion);
-          regions.set(j, new ArrayList<Coordinate>());
+
+    boolean someRemoved = false;
+    do {
+      someRemoved = false;
+      for(int i = 0; i < regions.size(); i++) {
+        for(int j = i + 1; j < regions.size(); j++) {
+          if(regions.get(j).size() == 0 || regions.get(i).size() == 0)
+            continue;
+          List<Coordinate> originalRegion = regions.get(i);
+          List<Coordinate> comparedRegion = regions.get(j);
+          if(originalRegion.get(0).type != comparedRegion.get(0).type)
+            continue;
+          if(originalRegion.stream()
+               .anyMatch(plant1 -> comparedRegion.stream().anyMatch(plant2 -> plant2.adjacent(plant1)))) {
+            originalRegion.addAll(comparedRegion);
+            regions.set(j, new ArrayList<Coordinate>());
+            someRemoved = true;
+          }
+        }
+      }
+      for(int i = regions.size() - 1; i >= 0; i--) {
+        if(regions.get(i).size() == 0) {
+          regions.remove(i); 
         }
       }
     }
-    for(int i = regions.size() - 1; i >= 0; i--) {
-      if(regions.get(i).size() == 0) {
-        regions.remove(i); 
-      }
-    }
+    while(someRemoved);
   }
 
   static int calculateCircumference(List<Coordinate> region) {
